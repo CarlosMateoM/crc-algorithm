@@ -33,15 +33,16 @@ public class CRCHandler implements Runnable {
 
             Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
-            System.out.println("El hilo fue interrumpido mientras dormía.");
-            e.printStackTrace();
+            System.out.println("El hilo fue interrumpido mientras dormía.");    
         }
     }
 
     @Override
     public void run() {
 
-        int xor = 0;
+        int xor;
+
+        cycleInterationListener.notifyAlgorithmStart();
 
         crc.setInputPadded(crc.getInputBitstring() + crc.getInitialFiller());
 
@@ -53,7 +54,7 @@ public class CRCHandler implements Runnable {
 
             cycleInterationListener.notifyCycleIteration(crc);
 
-            sleepForSeconds(5);
+            sleepForSeconds(2);
 
             // (^) xor bits operator
             xor = Integer.parseInt(crc.getCurrentChuck(), 2) ^ Integer.parseInt(crc.getPolynomialBitstring(), 2);
@@ -61,6 +62,8 @@ public class CRCHandler implements Runnable {
             crc.setCurrentChuck(xor == 0 ? "" : Integer.toBinaryString(xor));
 
             crc.setInputPadded(crc.getCurrentChuck() + crc.getInputPadded());
+
+            cycleInterationListener.notifyCycleIteration(crc);
 
             crc.setQuotient(crc.getQuotient() + '1');
 
@@ -70,8 +73,10 @@ public class CRCHandler implements Runnable {
 
             cycleInterationListener.notifyCycleIteration(crc);
 
-            sleepForSeconds(5);
+            sleepForSeconds(2);
         }
+        
+        cycleInterationListener.notifyAlgorithmFinish(crc);
 
     }
 }

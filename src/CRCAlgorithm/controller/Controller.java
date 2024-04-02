@@ -12,8 +12,8 @@ import java.awt.event.ActionListener;
  */
 public class Controller implements ActionListener{
     
-    private View view;
-    private CRCHandler crcHandler;
+    private final View view;
+    private final CRCHandler crcHandler;
 
     public Controller(View view, CRCHandler crcHandler) {
         this.view = view;
@@ -29,12 +29,21 @@ public class Controller implements ActionListener{
     }
     
     
+    private void CheckCRCAlgorithm() {
+        CRC crc = view.getDataToCheckCRCAlgorithm();
+        crcHandler.setCrc(crc);
+        Thread thread = new Thread(crcHandler);
+        thread.start();
+    }
+    
+    
     
     @Override
     public void actionPerformed(ActionEvent e) {
         String actionCommand = e.getActionCommand();
         switch(actionCommand) {
-            case "initCRCAlgorithmCmd": initCRCAlgorithm();
+            case "initCRCAlgorithmCmd": initCRCAlgorithm();break;
+            case "CheckCRCAlgorithmCmd": CheckCRCAlgorithm(); break;
         }
     }
    
